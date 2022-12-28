@@ -1,0 +1,61 @@
+{
+  "name": "elrs-telemetry",
+  "version": "1.0.0",
+  "main": "builder.js",
+  "author": "Janez Troha",
+  "license": "MIT",
+  "scripts": {
+    "pre-commit": "lint-staged",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0",
+    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+    "start": "ts-node builder.ts --watch",
+    "build": "ts-node builder.ts"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "@types/live-server": "^1.2.1",
+    "@types/node": "^18.11.9",
+    "@types/postcss-preset-env": "^7.7.0",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "autoprefixer": "^10.4.13",
+    "chokidar": "^3.5.3",
+    "esbuild": "^0.15.13",
+    "esbuild-css-modules-plugin": "^2.6.2",
+    "esbuild-sass-plugin": "^2.4.0",
+    "eslint": "^8.26.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-react": "^7.31.10",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "fs-extra": "^10.1.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "live-server": "^1.2.2",
+    "postcss": "^8.4.18",
+    "postcss-preset-env": "^7.8.2",
+    "prettier": "^2.7.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  },
+  "lint-staged": {
+    "*.+(ts|tsx)": "eslint --fix",
+    "*.+(json|css|md)": "prettier --write"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "overrides": {
+    "chokidar": "^3.5.3"
+  }
+}
