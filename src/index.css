@@ -6,18 +6,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body,
-#root,
-.App,
-.chakra-tabs,
-#mapId {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
+.map-container .ol-rotate {
+  top: 3em;
 }
-
-#mapId > * {
-  pointer-events: auto;
+.map-container .ol-control button {
+  height: 2.575rem;
+  width: 2.575rem;
+  font-size: 1rem;
 }

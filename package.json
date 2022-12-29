@@ -14,21 +14,32 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "dependencies": {
-    "@chakra-ui/react": "^2.4.5",
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "framer-motion": "^8.0.2",
-    "leaflet": "^1.9.3",
+    "antd": "*",
+    "ol": "^7.2.2",
+    "ol-ext": "^4.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-leaflet": "^4.2.0",
+    "react-icons": "^4.7.1",
+    "react-router-dom": "^6.6.1",
     "react-scripts": "latest"
   },
   "devDependencies": {
@@ -36,6 +47,7 @@
     "@types/leaflet": "^1.9.0",
     "@types/live-server": "^1.2.1",
     "@types/node": "^18.11.9",
+    "@types/ol-ext": "npm:@siedlerchr/types-ol-ext@^3.0.8",
     "@types/postcss-preset-env": "^7.7.0",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
