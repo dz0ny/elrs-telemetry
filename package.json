@@ -1,27 +1,44 @@
 {
   "name": "elrs-telemetry",
   "version": "1.0.0",
-  "main": "builder.js",
+  "main": "src/index.tsx",
   "author": "Janez Troha",
   "license": "MIT",
   "scripts": {
     "pre-commit": "lint-staged",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
-    "start": "ts-node builder.ts --watch",
-    "build": "ts-node builder.ts"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "dependencies": {
+    "@chakra-ui/react": "^2.4.5",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "framer-motion": "^8.0.2",
+    "leaflet": "^1.9.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.0",
+    "react-scripts": "latest"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
+    "@types/leaflet": "^1.9.0",
     "@types/live-server": "^1.2.1",
     "@types/node": "^18.11.9",
     "@types/postcss-preset-env": "^7.7.0",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
+    "@types/web-bluetooth": "^0.0.16",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
     "autoprefixer": "^10.4.13",
