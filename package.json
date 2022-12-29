@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.tsx",
   "author": "Janez Troha",
+  "homepage": "https://dz0ny.github.io/elrs-telemetry/",
   "license": "MIT",
   "scripts": {
     "pre-commit": "lint-staged",
