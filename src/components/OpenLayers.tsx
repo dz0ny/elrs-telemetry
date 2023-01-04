@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, FC, useContext, createContext, PropsWithChildren } from "react";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
@@ -10,8 +10,23 @@ import Stroke from "ol/style/Stroke";
 import { DragRotateAndZoom, defaults as defaultInteractions } from "ol/interaction";
 import { FullScreen, defaults as defaultControls } from "ol/control";
 
-const OpenLayers: React.FC = () => {
-  const [map, setMap] = useState();
+const useValue = () => {
+  const [map, setMap] = useState<Map | null>(null);
+
+  return {
+    map,
+    setMap
+  };
+};
+
+export const MapContext = createContext({} as ReturnType<typeof useValue>);
+
+export const MapContextProvider: FC<PropsWithChildren> = (props) => {
+  return <MapContext.Provider value={useValue()}>{props.children}</MapContext.Provider>;
+};
+
+const OpenLayers: FC = () => {
+  const mapContext = useContext(MapContext);
   const mapElement = useRef();
 
   useEffect(() => {
@@ -39,20 +54,20 @@ const OpenLayers: React.FC = () => {
           })
         }),
         new TileLayer({
+          visible: false,
+          minZoom: 10,
+          source: new TileWMS({
+            url: "https://storitve.eprostor.gov.si/ows-elf-wms/oi/ows?SERVICE=WMS&",
+            params: { LAYERS: "OI.OrthoimageCoverage", TILED: true },
+            serverType: "geoserver"
+          })
+        }),
+        new TileLayer({
           source: new XYZ({
             attributions: 'Flight Zones © <a href="https://www.openaip.net">Openaip</a>',
             url: "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/openaip/ul_grid/{z}/{x}/{y}.png"
           })
         }),
-
-        // new TileLayer({
-        //   minZoom: 10,
-        //   source: new TileWMS({
-        //     url: "https://storitve.eprostor.gov.si/ows-elf-wms/oi/ows?SERVICE=WMS&",
-        //     params: { LAYERS: "OI.OrthoimageCoverage", 'TILED': true },
-        //     serverType: "geoserver"
-        //   })
-        // }),
         new Graticule({
           // the style to use for the lines, optional.
           strokeStyle: new Stroke({
@@ -68,13 +83,13 @@ const OpenLayers: React.FC = () => {
         center: localStorage
           .getItem("center")
           ?.split(",")
-          .map((e) => Number(e)),
-        zoom: Number(localStorage.getItem("zoomLevel"))
+          .map((e) => Number(e)) || [0, 0],
+        zoom: Number(localStorage.getItem("zoomLevel") || 0)
       })
     });
 
     initialMap.setTarget(mapElement.current);
-    setMap(initialMap as any);
+    mapContext.setMap(initialMap as any);
 
     initialMap.on("rendercomplete", function (e) {
       var zoomLevel = initialMap.getView().getZoom() || 0;
