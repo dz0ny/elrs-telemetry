@@ -4,6 +4,7 @@ import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import "ol/ol.css";
 import XYZ from "ol/source/XYZ";
+import TileWMS from "ol/source/TileWMS";
 import Graticule from "ol/layer/Graticule";
 import Stroke from "ol/style/Stroke";
 import { DragRotateAndZoom, defaults as defaultInteractions } from "ol/interaction";
@@ -26,19 +27,32 @@ const OpenLayers: React.FC = () => {
           visible: false,
           source: new XYZ({
             attributions:
-              'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
-              'rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
-            url: "https://server.arcgisonline.com/ArcGIS/rest/services/" + "World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+              'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
+            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
           })
         }),
         new TileLayer({
           source: new XYZ({
             attributions:
-              'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
-              'rest/services/World_Imagery/MapServer">ArcGIS</a>',
-            url: "https://server.arcgisonline.com/ArcGIS/rest/services/" + "World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              'Map © <a href="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer">ArcGIS</a>',
+            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           })
         }),
+        new TileLayer({
+          source: new XYZ({
+            attributions: 'Flight Zones © <a href="https://www.openaip.net">Openaip</a>',
+            url: "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/openaip/ul_grid/{z}/{x}/{y}.png"
+          })
+        }),
+
+        // new TileLayer({
+        //   minZoom: 10,
+        //   source: new TileWMS({
+        //     url: "https://storitve.eprostor.gov.si/ows-elf-wms/oi/ows?SERVICE=WMS&",
+        //     params: { LAYERS: "OI.OrthoimageCoverage", 'TILED': true },
+        //     serverType: "geoserver"
+        //   })
+        // }),
         new Graticule({
           // the style to use for the lines, optional.
           strokeStyle: new Stroke({
@@ -51,13 +65,23 @@ const OpenLayers: React.FC = () => {
         })
       ],
       view: new View({
-        center: [0, 0],
-        zoom: 0
+        center: localStorage
+          .getItem("center")
+          ?.split(",")
+          .map((e) => Number(e)),
+        zoom: Number(localStorage.getItem("zoomLevel"))
       })
     });
 
     initialMap.setTarget(mapElement.current);
     setMap(initialMap as any);
+
+    initialMap.on("rendercomplete", function (e) {
+      var zoomLevel = initialMap.getView().getZoom() || 0;
+      var center = initialMap.getView().getCenter() || [0, 0];
+      localStorage.setItem("zoomLevel", zoomLevel.toString());
+      localStorage.setItem("center", center?.map((e) => e.toString()).join(","));
+    });
 
     return () => initialMap.setTarget(undefined);
   }, []);
