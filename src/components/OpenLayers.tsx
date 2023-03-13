@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef, FC, useContext, createContext, PropsWithChildren } from "react";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
+import ImageLayer from "ol/layer/Image";
 import OSM from "ol/source/OSM";
 import "ol/ol.css";
 import XYZ from "ol/source/XYZ";
 import TileWMS from "ol/source/TileWMS";
 import Graticule from "ol/layer/Graticule";
 import Stroke from "ol/style/Stroke";
+import RasterSource from 'ol/source/Raster';
 import { DragRotateAndZoom, defaults as defaultInteractions } from "ol/interaction";
 import { FullScreen, defaults as defaultControls } from "ol/control";
 
@@ -24,6 +26,44 @@ export const MapContext = createContext({} as ReturnType<typeof useValue>);
 export const MapContextProvider: FC<PropsWithChildren> = (props) => {
   return <MapContext.Provider value={useValue()}>{props.children}</MapContext.Provider>;
 };
+// @ts-ignore
+function flood(pixels, data) {
+  const pixel = pixels[0];
+  if (pixel[3]) {
+    const height =
+      -10000 + (pixel[0] * 256 * 256 + pixel[1] * 256 + pixel[2]) * 0.1;
+    if (height <= data.level) {
+      pixel[0] = 134;
+      pixel[1] = 203;
+      pixel[2] = 249;
+      pixel[3] = 255;
+    } else {
+      pixel[3] = 0;
+    }
+  }
+  return pixel;
+}
+
+const key = 'LsXkR8HuqoeDPbkSTaFj	';
+const elevation = new XYZ({
+  // The RGB values in the source collectively represent elevation.
+  // Interpolation of individual colors would produce incorrect evelations and is disabled.
+  url: 'https://api.maptiler.com/tiles/terrain-rgb/{z}/{x}/{y}.png?key=' + key,
+  tileSize: 512,
+  maxZoom: 12,
+  crossOrigin: '',
+  interpolate: false,
+});
+
+const voda = new RasterSource({
+  sources: [elevation],
+  operation: flood,
+});
+
+voda.on('beforeoperations', function (event) {
+  event.data.level = localStorage.voda;
+});
+
 
 const OpenLayers: FC = () => {
   const mapContext = useContext(MapContext);
@@ -67,6 +107,10 @@ const OpenLayers: FC = () => {
             attributions: 'Flight Zones © <a href="https://www.openaip.net">Openaip</a>',
             url: "https://map.adsbexchange.com/mapproxy/tiles/1.0.0/openaip/ul_grid/{z}/{x}/{y}.png"
           })
+        }),
+        new ImageLayer({
+          opacity: 0.6,
+          source: voda,
         }),
         new Graticule({
           // the style to use for the lines, optional.

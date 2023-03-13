@@ -11,6 +11,7 @@ import MenuItem from "antd/es/menu/MenuItem";
 import SubMenu from "antd/es/menu/SubMenu";
 const { Header, Content, Footer, Sider } = Layout;
 import { Switch } from "antd";
+import { InputNumber } from 'antd';
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -23,6 +24,7 @@ const App: React.FC = () => {
   const [ortoSICheck, setOrtoSICheck] = useState<boolean>(false);
   const [airCheck, setAirCheck] = useState<boolean>(false);
   const [gridCheck, setGridCheck] = useState<boolean>(false);
+  const [waterCheck, setWaterCheck] = useState<boolean>(false);
 
   const {
     token: { colorBgContainer }
@@ -58,13 +60,21 @@ const App: React.FC = () => {
     mapContext.map?.render();
   }
 
+  function onWaterChange(value: number | null) {
+    localStorage.voda = value;
+    const l = getLayer(6);
+    l?.changed();
+    l?.getSource()?.changed();
+  };
+
   mapContext.map?.on("postrender", (_) => {
     setOsmCheck(isVisible(1));
     setStreetCheck(isVisible(2));
     setOrtoCheck(isVisible(3));
     setOrtoSICheck(isVisible(4));
     setAirCheck(isVisible(5));
-    setGridCheck(isVisible(6));
+    setGridCheck(isVisible(7));
+    setWaterCheck(isVisible(6));
   });
 
   return (
@@ -73,8 +83,12 @@ const App: React.FC = () => {
         <Sider style={{ padding: 2, background: colorBgContainer }} collapsed={true}>
           <div style={{ display: "flex", justifyContent: "space-between", flexDirection: "column", height: "100%" }}>
             <div>
-              <Menu theme='light' mode='vertical' defaultSelectedKeys={["map"]} selectable={false}>
-                <SubMenu icon={<RiMap2Fill />} title='Map' key={"map"}>
+              <Menu theme='light' mode='vertical' defaultSelectedKeys={["map"]} selectable={true}>
+
+                <SubMenu icon={<RiMap2Fill />} title='Map' key={"map"}
+                  // @ts-ignore
+                  onClick={(e) => e?.stopPropagation()}
+                >
                   <Menu.ItemGroup title='Maps'>
                     <Menu.Item key='map:1'>
                       <Switch
@@ -120,8 +134,17 @@ const App: React.FC = () => {
                     </Menu.Item>
                     <Menu.Item key='map:6'>
                       <Switch
-                        checked={gridCheck}
+                        checked={waterCheck}
                         onChange={(_) => toggleLayer(6)}
+                        checkedChildren='Hide Water'
+                        unCheckedChildren='Show Water'
+                      />
+                      <InputNumber disabled={!waterCheck} min={1} max={2500} defaultValue={localStorage.voda} onChange={onWaterChange} />
+                    </Menu.Item>
+                    <Menu.Item key='map:7'>
+                      <Switch
+                        checked={gridCheck}
+                        onChange={(_) => toggleLayer(7)}
                         checkedChildren='Hide Grid'
                         unCheckedChildren='Show Grid'
                       />
